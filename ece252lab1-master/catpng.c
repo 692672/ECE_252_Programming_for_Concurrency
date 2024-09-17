@@ -57,7 +57,7 @@ void cat_helper(char * pref) {
                     tot += len_inf;
                 }
                 else {
-                    zerr(inf_ret);
+                    zerr(inf_ret); //in zutil.c
                 }
 		}
 		fclose(fp);
