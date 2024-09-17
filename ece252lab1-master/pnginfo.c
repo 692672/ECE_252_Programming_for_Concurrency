@@ -29,7 +29,7 @@ int main(int argc, char * argv[]) {
 	char * directory;
 	FILE * pngpointer;
 	unsigned char * tmp = malloc(MAX_MALLOC);
- 	unsigned char png_header [8];
+ 	unsigned char png_header [8]; //8 bytes for png_header size
 
 	simple_PNG_p png_file_format;
 	data_IHDR_p pointer_to_IHDR_data;
@@ -52,7 +52,7 @@ int main(int argc, char * argv[]) {
 	    directory = argv[i + 1];  //traverse through the directory
 	}
 
-	file_name = get_file_name(directory);	//use command to assign a file to file_name
+	file_name = get_file_name(directory);	//use command to assign a file to file_name from directory
 	pngpointer = fopen(directory, "rb");	//open file in directory, rb is for non-text files.
 
 	fread(png_header, 1, sizeof(png_header), pngpointer);  //opens png_header characters to be used, stores in png_header variable
@@ -62,9 +62,9 @@ int main(int argc, char * argv[]) {
 	if (realpng != 1){
 		printf("%s: Not a PNG file\n", file_name); //not a png file
 	} else {
-		printf("%s: %u x %u\n", file_name, ntohl(pointer_to_IHDR_data->width), ntohl(pointer_to_IHDR_data->height)); //print dimensions
+		printf("%s: %u x %u\n", file_name, ntohl(pointer_to_IHDR_data->width), ntohl(pointer_to_IHDR_data->height)); //print dimensions, %s for string, %u for unsigned int
 		
-		get_png_chunks(pointer_to_IHDR_chunk, pngpointer, 8, SEEK_SET); //get the png chunks to get CRC
+		get_png_chunks(pointer_to_IHDR_chunk, pngpointer, 8, SEEK_SET); //get the png chunks to get CRC by offsetting from IDHR chunk
         fseek(pngpointer, 12, SEEK_SET); //sets pngpointer to new offset of chunk for crc
         fread(tmp, 1, ntohl(pointer_to_IHDR_chunk->length) + 4, pngpointer); //store crc values to tmp
         is_corrupt = compare_crcs(tmp, pointer_to_IHDR_chunk->crc, ntohl(pointer_to_IHDR_chunk->length) + 4, "IHDR"); //checks if crcs are valid
